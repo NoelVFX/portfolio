@@ -423,16 +423,21 @@
     z-index: 100; pointer-events: none;
   }
 
-  /* cursor follower (fine-pointer only) */
+  /* ring cursor (fine-pointer only) — replaces the native cursor, tracked 1:1 */
   .cursor {
-    position: fixed; top: 0; left: 0; width: 34px; height: 34px;
-    border: 1px solid var(--accent); border-radius: 50%;
+    position: fixed; top: 0; left: 0; width: 30px; height: 30px;
+    border: 1.5px solid var(--accent); border-radius: 50%;
     transform: translate(-100px, -100px) translate(-50%, -50%);
-    pointer-events: none; z-index: 99; opacity: 0.75;
-    transition: width 0.18s ease, height 0.18s ease, background 0.18s ease, opacity 0.2s ease;
+    pointer-events: none; z-index: 2147483000; opacity: 0.9;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent);
+    transition: width 0.16s ease, height 0.16s ease, background 0.16s ease, border-color 0.16s ease, opacity 0.2s ease;
+    will-change: transform;
   }
-  .cursor.big { width: 58px; height: 58px; background: var(--accent-quiet); }
-  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) { .cursor { display: none; } }
+  .cursor.big { width: 54px; height: 54px; background: var(--accent-quiet); }
+  .cursor.down { width: 22px; height: 22px; background: color-mix(in srgb, var(--accent) 28%, transparent); }
+  /* when the ring is active, hide the native cursor everywhere */
+  html.cursor-ring, html.cursor-ring * { cursor: none; }
+  @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
 
   /* tech marquee band */
   .marquee-band {
@@ -1178,29 +1183,35 @@
     update();
   })();
 
-  // ---- cursor follower + magnetic buttons + hero parallax (fine pointer, motion ok) ----
+  // ---- ring cursor: the ring IS the pointer, tracked 1:1 (no lag) ----
+  (function () {
+    var fine = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    var cur = document.getElementById("cursor");
+    if (!fine || !cur) return;
+    document.documentElement.classList.add("cursor-ring"); // CSS hides the native cursor
+    // position the ring exactly on the pointer, every move — no smoothing
+    document.addEventListener("pointermove", function (e) {
+      cur.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px) translate(-50%,-50%)";
+    }, { passive: true });
+    // grow over interactive targets
+    var sel = "a, button, .card, .gh-badge, input, textarea, .deck, [role='button']";
+    document.addEventListener("pointerover", function (e) { if (e.target.closest && e.target.closest(sel)) cur.classList.add("big"); });
+    document.addEventListener("pointerout", function (e) {
+      var to = e.relatedTarget;
+      if (e.target.closest && e.target.closest(sel) && !(to && to.closest && to.closest(sel))) cur.classList.remove("big");
+    });
+    // press feedback + hide when the pointer leaves the window
+    document.addEventListener("pointerdown", function () { cur.classList.add("down"); });
+    document.addEventListener("pointerup", function () { cur.classList.remove("down"); });
+    document.addEventListener("mouseleave", function () { cur.style.opacity = "0"; });
+    document.addEventListener("mouseenter", function () { cur.style.opacity = ""; });
+  })();
+
+  // ---- magnetic buttons + hero parallax (fine pointer, motion ok) ----
   (function () {
     var fine = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
-
-    // cursor follower
-    var cur = document.getElementById("cursor");
-    if (fine && cur) {
-      var x = window.innerWidth / 2, y = window.innerHeight / 2, cx = x, cy = y;
-      document.addEventListener("pointermove", function (e) { x = e.clientX; y = e.clientY; }, { passive: true });
-      (function loop() {
-        cx += (x - cx) * 0.2; cy += (y - cy) * 0.2;
-        cur.style.transform = "translate(" + cx + "px," + cy + "px) translate(-50%,-50%)";
-        requestAnimationFrame(loop);
-      })();
-      var sel = "a, button, .card, .gh-badge, input";
-      document.addEventListener("pointerover", function (e) { if (e.target.closest && e.target.closest(sel)) cur.classList.add("big"); });
-      document.addEventListener("pointerout", function (e) {
-        var to = e.relatedTarget;
-        if (e.target.closest && e.target.closest(sel) && !(to && to.closest && to.closest(sel))) cur.classList.remove("big");
-      });
-    }
 
     // magnetic buttons
     if (fine) {
