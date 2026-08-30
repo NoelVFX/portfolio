@@ -455,7 +455,6 @@
   .marquee .item .sep { color: var(--accent); font-size: 8px; }
   .marquee .item.hot { color: var(--text); }
   @keyframes marquee { to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
 
   /* ambient background drift (very slow; static under reduced motion) */
   @media (prefers-reduced-motion: no-preference) {
@@ -497,10 +496,8 @@
     background: linear-gradient(115deg, transparent 30%, color-mix(in srgb, var(--accent) 22%, transparent) 48%, transparent 66%);
     transform: translateX(-120%);
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .deck-zone.armed:not(.revealed) .deck-front::after { animation: deck-sheen 3.4s ease-in-out infinite; }
-    @keyframes deck-sheen { 0%, 60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
-  }
+  .deck-zone.armed:not(.revealed) .deck-front::after { animation: deck-sheen 3.4s ease-in-out infinite; }
+  @keyframes deck-sheen { 0%, 60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
   .deck-suit { font-size: 26px; color: var(--accent); line-height: 1; }
   .deck-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
   .deck-cta { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; letter-spacing: -0.02em; color: var(--text); }
@@ -532,21 +529,17 @@
   .deck-zone.revealed { min-height: 0; }
   .deck-zone.revealed .deck-panels { grid-template-rows: 1fr; }
   .deck-zone.revealed .deck { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(1.06); pointer-events: none; }
-  /* deal-out pop for each panel */
+  /* deal-out slide for each panel — cards travel from the deck to their places */
   .deck-zone.armed .skillgroup, .deck-zone.armed .award {
-    opacity: 0; transform: translateY(26px) scale(0.9);
-    transition: opacity 0.5s ease, transform 0.55s cubic-bezier(0.2, 0.85, 0.25, 1);
+    opacity: 0; transform: translateY(70px) scale(0.84) rotate(-3deg);
+    transition: opacity 0.55s ease, transform 0.72s cubic-bezier(0.18, 0.9, 0.24, 1);
   }
   .deck-zone.revealed .skillgroup, .deck-zone.revealed .award { opacity: 1; transform: none; }
-  .deck-zone.revealed .skills > :nth-child(1), .deck-zone.revealed .awards > :nth-child(1) { transition-delay: 0.12s; }
-  .deck-zone.revealed .skills > :nth-child(2), .deck-zone.revealed .awards > :nth-child(2) { transition-delay: 0.2s; }
-  .deck-zone.revealed .skills > :nth-child(3), .deck-zone.revealed .awards > :nth-child(3) { transition-delay: 0.28s; }
-  .deck-zone.revealed .skills > :nth-child(4), .deck-zone.revealed .awards > :nth-child(4) { transition-delay: 0.36s; }
+  .deck-zone.revealed .skills > :nth-child(1), .deck-zone.revealed .awards > :nth-child(1) { transition-delay: 0.10s; }
+  .deck-zone.revealed .skills > :nth-child(2), .deck-zone.revealed .awards > :nth-child(2) { transition-delay: 0.24s; }
+  .deck-zone.revealed .skills > :nth-child(3), .deck-zone.revealed .awards > :nth-child(3) { transition-delay: 0.38s; }
+  .deck-zone.revealed .skills > :nth-child(4), .deck-zone.revealed .awards > :nth-child(4) { transition-delay: 0.52s; }
   @media (max-width: 560px) { .deck-zone.armed .deck { width: 220px; height: 260px; } .deck-cta { font-size: 1.6rem; } }
-  @media (prefers-reduced-motion: reduce) {
-    .deck-zone.armed .deck-panels, .deck-zone.armed, .deck-zone.armed .skillgroup, .deck-zone.armed .award, .deck-card, .deck-front, .deck-zone.armed .deck { transition: none; }
-    .deck-zone.shuffling .deck-card, .deck-zone.shuffling .deck-front { animation: none; }
-  }
 </style>
 
 <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
@@ -997,6 +990,7 @@
 
     function size() {
       var host = canvas.parentElement;
+      if (!host) return;
       W = host.clientWidth; H = host.clientHeight;
       canvas.width = W * dpr; canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1057,11 +1051,10 @@
     }
     function start() {
       size(); build();
-      if (reduce) { project(); paint(); }
-      else if (!raf) frame();
+      if (!raf) frame(); // particles always drift — this is a signature element
     }
     window.addEventListener("resize", function () { size(); build(); });
-    if (fine && !reduce) {
+    if (fine) {
       window.addEventListener("pointermove", function (e) {
         ptr.tx = (e.clientX / window.innerWidth - 0.5) * 2;
         ptr.ty = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -1247,7 +1240,6 @@
 
   // ---- card-deck reveal: click to shuffle & deal out the panels ----
   (function () {
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.querySelectorAll("[data-deck]").forEach(function (zone) {
       var deck = zone.querySelector(".deck");
       var panels = zone.querySelector(".deck-panels");
@@ -1257,15 +1249,14 @@
 
       function reveal() {
         if (zone.classList.contains("revealed") || zone.classList.contains("busy")) return;
-        zone.classList.add("busy");
-        var open = function () {
+        zone.classList.add("busy", "shuffling");
+        // shuffle the deck, then deal the panels out into place
+        setTimeout(function () {
           zone.classList.remove("shuffling");
           zone.classList.add("revealed");
           deck.setAttribute("aria-expanded", "true");
           panels.setAttribute("aria-hidden", "false");
-        };
-        if (reduce) { open(); }
-        else { zone.classList.add("shuffling"); setTimeout(open, 720); }
+        }, 720);
       }
       deck.addEventListener("click", reveal);
     });
