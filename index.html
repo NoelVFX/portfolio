@@ -462,6 +462,91 @@
     body { animation: ambient-drift 26s ease-in-out infinite alternate; }
     @keyframes ambient-drift { to { background-position: 6% -3%, -4% 5%, 0 -4%, 0 0; } }
   }
+
+  /* ================= card-deck reveal (Toolkit / Recognition) ================= */
+  .deck-zone { position: relative; }
+  /* no-JS: content shown normally, deck hidden. JS "arms" the deck. */
+  .deck { display: none; }
+  .deck-zone.armed .deck {
+    display: block; position: absolute; top: 0; left: 50%;
+    width: 268px; height: 300px; padding: 0; border: 0; background: none; cursor: pointer;
+    transform: translateX(-50%);
+    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 0.7, 0.24, 1);
+    z-index: 2;
+  }
+  .deck-card, .deck-front {
+    position: absolute; inset: 0; border-radius: 18px;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
+    transition: transform 0.3s cubic-bezier(0.22, 0.7, 0.24, 1);
+  }
+  .deck-card:nth-child(1) { transform: rotate(-7deg) translateY(5px); }
+  .deck-card:nth-child(2) { transform: rotate(5deg) translateY(3px); }
+  .deck-card:nth-child(3) { transform: rotate(-2deg); }
+  .deck-front {
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    text-align: center; overflow: hidden;
+    background:
+      radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%),
+      color-mix(in srgb, var(--surface) 92%, transparent);
+  }
+  .deck-front::after { /* sweeping sheen */
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(115deg, transparent 30%, color-mix(in srgb, var(--accent) 22%, transparent) 48%, transparent 66%);
+    transform: translateX(-120%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .deck-zone.armed:not(.revealed) .deck-front::after { animation: deck-sheen 3.4s ease-in-out infinite; }
+    @keyframes deck-sheen { 0%, 60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+  }
+  .deck-suit { font-size: 26px; color: var(--accent); line-height: 1; }
+  .deck-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+  .deck-cta { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; letter-spacing: -0.02em; color: var(--text); }
+  .deck-hint { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  /* hover: fan the stack + lift */
+  .deck-zone.armed .deck:hover .deck-card:nth-child(1) { transform: rotate(-13deg) translate(-16px, -2px); }
+  .deck-zone.armed .deck:hover .deck-card:nth-child(2) { transform: rotate(11deg) translate(16px, -2px); }
+  .deck-zone.armed .deck:hover .deck-card:nth-child(3) { transform: rotate(-3deg) translateY(-4px); }
+  .deck-zone.armed .deck:hover .deck-front { transform: translateY(-7px); box-shadow: 0 22px 50px rgba(0,0,0,0.28); }
+  .deck-zone.armed .deck:focus-visible { outline: none; }
+  .deck-zone.armed .deck:focus-visible .deck-front { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* shuffle (riffle) */
+  .deck-zone.shuffling .deck-card:nth-child(1) { animation: sh1 0.72s ease both; }
+  .deck-zone.shuffling .deck-card:nth-child(2) { animation: sh2 0.72s ease both; }
+  .deck-zone.shuffling .deck-card:nth-child(3) { animation: sh3 0.72s ease both; }
+  .deck-zone.shuffling .deck-front { animation: sh0 0.72s ease both; }
+  @keyframes sh0 { 0%{} 25%{ transform: translateX(46px) rotate(11deg); } 55%{ transform: translateX(-34px) rotate(-8deg); } 80%{ transform: translateX(12px) rotate(3deg); } 100%{ transform: none; } }
+  @keyframes sh1 { 0%{ transform: rotate(-7deg) translateY(5px);} 25%{ transform: translate(-74px,-12px) rotate(-24deg);} 55%{ transform: translate(40px,8px) rotate(16deg);} 80%{ transform: translate(-16px,0) rotate(-9deg);} 100%{ transform: rotate(-7deg) translateY(5px);} }
+  @keyframes sh2 { 0%{ transform: rotate(5deg) translateY(3px);} 25%{ transform: translate(70px,10px) rotate(22deg);} 55%{ transform: translate(-38px,-6px) rotate(-14deg);} 80%{ transform: translate(18px,2px) rotate(8deg);} 100%{ transform: rotate(5deg) translateY(3px);} }
+  @keyframes sh3 { 0%{ transform: rotate(-2deg);} 30%{ transform: translate(24px,-14px) rotate(12deg);} 60%{ transform: translate(-28px,10px) rotate(-12deg);} 100%{ transform: rotate(-2deg);} }
+
+  /* panels: armed = collapsed; revealed = deal out */
+  .deck-panels { display: grid; grid-template-rows: 1fr; }
+  .deck-zone.armed .deck-panels { grid-template-rows: 0fr; transition: grid-template-rows 0.55s cubic-bezier(0.22, 0.7, 0.24, 1); }
+  .deck-panels-inner { min-height: 0; overflow: hidden; }
+  .deck-zone.armed { min-height: 340px; transition: min-height 0.55s cubic-bezier(0.22, 0.7, 0.24, 1); }
+  .deck-zone.armed:not(.revealed) .deck-panels-inner { visibility: hidden; }
+  .deck-zone.revealed { min-height: 0; }
+  .deck-zone.revealed .deck-panels { grid-template-rows: 1fr; }
+  .deck-zone.revealed .deck { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(1.06); pointer-events: none; }
+  /* deal-out pop for each panel */
+  .deck-zone.armed .skillgroup, .deck-zone.armed .award {
+    opacity: 0; transform: translateY(26px) scale(0.9);
+    transition: opacity 0.5s ease, transform 0.55s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+  .deck-zone.revealed .skillgroup, .deck-zone.revealed .award { opacity: 1; transform: none; }
+  .deck-zone.revealed .skills > :nth-child(1), .deck-zone.revealed .awards > :nth-child(1) { transition-delay: 0.12s; }
+  .deck-zone.revealed .skills > :nth-child(2), .deck-zone.revealed .awards > :nth-child(2) { transition-delay: 0.2s; }
+  .deck-zone.revealed .skills > :nth-child(3), .deck-zone.revealed .awards > :nth-child(3) { transition-delay: 0.28s; }
+  .deck-zone.revealed .skills > :nth-child(4), .deck-zone.revealed .awards > :nth-child(4) { transition-delay: 0.36s; }
+  @media (max-width: 560px) { .deck-zone.armed .deck { width: 220px; height: 260px; } .deck-cta { font-size: 1.6rem; } }
+  @media (prefers-reduced-motion: reduce) {
+    .deck-zone.armed .deck-panels, .deck-zone.armed, .deck-zone.armed .skillgroup, .deck-zone.armed .award, .deck-card, .deck-front, .deck-zone.armed .deck { transition: none; }
+    .deck-zone.shuffling .deck-card, .deck-zone.shuffling .deck-front { animation: none; }
+  }
 </style>
 
 <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
@@ -719,6 +804,18 @@
         <h2>Toolkit</h2>
         <span class="eyebrow">What I build with</span>
       </div>
+      <div class="deck-zone" data-deck>
+        <button class="deck" type="button" aria-expanded="false" aria-controls="toolkit-panels">
+          <span class="deck-card"></span><span class="deck-card"></span><span class="deck-card"></span>
+          <span class="deck-front">
+            <span class="deck-suit">◆</span>
+            <span class="deck-eyebrow">Toolkit</span>
+            <span class="deck-cta">Click me!</span>
+            <span class="deck-hint">shuffle &amp; deal the stack</span>
+          </span>
+        </button>
+        <div class="deck-panels" id="toolkit-panels">
+        <div class="deck-panels-inner">
       <div class="skills">
         <div class="skillgroup">
           <div class="h">Languages</div>
@@ -745,6 +842,9 @@
           </div>
         </div>
       </div>
+        </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -755,6 +855,18 @@
         <h2>Recognition &amp; research</h2>
         <span class="eyebrow">Awards · papers</span>
       </div>
+      <div class="deck-zone" data-deck>
+        <button class="deck" type="button" aria-expanded="false" aria-controls="recognition-panels">
+          <span class="deck-card"></span><span class="deck-card"></span><span class="deck-card"></span>
+          <span class="deck-front">
+            <span class="deck-suit">♦</span>
+            <span class="deck-eyebrow">Recognition &amp; research</span>
+            <span class="deck-cta">Click me!</span>
+            <span class="deck-hint">shuffle &amp; deal the stack</span>
+          </span>
+        </button>
+        <div class="deck-panels" id="recognition-panels">
+        <div class="deck-panels-inner">
       <div class="awards">
         <div class="award">
           <div class="t">Agentiiv Case Design Competition, 1st Runner-Up</div>
@@ -778,6 +890,9 @@
             <div class="paper"><a href="https://drive.google.com/file/d/1O4Mq0J5YubMTHBLpXEPg-a33DsEeb7qA/view?usp=sharing" target="_blank" rel="noopener"><b>Regenerative Resource using DePIN</b> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>, presented at ISNCC 2024, Washington DC, USA.</div>
             <div class="paper"><a href="https://drive.google.com/file/d/1Tp_EBkSRiLw-XIYISoHJ48BVVVTxMMF4/view?usp=sharing" target="_blank" rel="noopener"><b>Waste Trading Blockchain</b> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>, Practical Blockchain Review, 2024.</div>
           </div>
+        </div>
+      </div>
+        </div>
         </div>
       </div>
     </div>
@@ -891,9 +1006,10 @@
       nodes = [];
       for (var i = 0; i < n; i++) {
         var z = Math.random() * 0.75 + 0.25; // depth: 0.25 (far) .. 1 (near)
+        var ang = Math.random() * 6.2832, spd = (Math.random() * 0.22 + 0.16) * z; // constant drift speed
         nodes.push({
           x: Math.random() * W, y: Math.random() * H, z: z,
-          vx: (Math.random() - 0.5) * 0.13 * z, vy: (Math.random() - 0.5) * 0.13 * z,
+          vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
           r: (Math.random() * 1.3 + 0.7) * (0.6 + z),
         });
       }
@@ -1127,5 +1243,31 @@
         });
       }, { passive: true });
     }
+  })();
+
+  // ---- card-deck reveal: click to shuffle & deal out the panels ----
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.querySelectorAll("[data-deck]").forEach(function (zone) {
+      var deck = zone.querySelector(".deck");
+      var panels = zone.querySelector(".deck-panels");
+      if (!deck || !panels) return;
+      zone.classList.add("armed");          // progressive enhancement: only collapse when JS runs
+      panels.setAttribute("aria-hidden", "true");
+
+      function reveal() {
+        if (zone.classList.contains("revealed") || zone.classList.contains("busy")) return;
+        zone.classList.add("busy");
+        var open = function () {
+          zone.classList.remove("shuffling");
+          zone.classList.add("revealed");
+          deck.setAttribute("aria-expanded", "true");
+          panels.setAttribute("aria-hidden", "false");
+        };
+        if (reduce) { open(); }
+        else { zone.classList.add("shuffling"); setTimeout(open, 720); }
+      }
+      deck.addEventListener("click", reveal);
+    });
   })();
 </script>
