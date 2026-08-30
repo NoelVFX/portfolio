@@ -276,7 +276,7 @@
   }
   .card:hover .preview .glass { opacity: 1; }
   .preview .open-badge {
-    position: absolute; z-index: 3; right: 12px; bottom: 12px;
+    position: absolute; z-index: 3; left: 12px; bottom: 12px;
     display: inline-flex; align-items: center; gap: 6px;
     font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.03em;
     color: var(--accent-ink); background: var(--accent);
@@ -286,6 +286,18 @@
   }
   .preview .open-badge svg { width: 13px; height: 13px; }
   .card:hover .preview .open-badge { transform: translateY(0); opacity: 1; }
+  /* always-visible GitHub link, bottom-right of the panel; clickable above the card overlay */
+  .preview .gh-badge {
+    position: absolute; z-index: 6; right: 12px; bottom: 12px;
+    width: 34px; height: 34px; border-radius: 9px;
+    display: grid; place-items: center;
+    color: var(--text); border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface) 86%, transparent);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.18s, border-color 0.18s, color 0.18s;
+  }
+  .preview .gh-badge:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
+  .preview .gh-badge svg { width: 18px; height: 18px; }
 
   /* whole-card click target (stretched link); explicit links stay on top */
   .card-link { position: absolute; inset: 0; z-index: 4; border-radius: 16px; }
@@ -433,6 +445,10 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM.5 8h4V24h-4V8Zm7 0h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-7.1c0-1.7-.03-3.9-2.38-3.9-2.38 0-2.75 1.86-2.75 3.78V24h-4V8Z"/></svg>
           LinkedIn
         </a>
+        <a class="btn" href="https://x.com/Noel_VFX_" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          X
+        </a>
       </div>
         </div>
         <div class="hero-photo">
@@ -509,6 +525,7 @@
             <div class="shot"><span class="ph">Loading preview…</span><iframe data-src="https://chainsilience-ai.vercel.app/" title="Live preview of Chainsilience AI" loading="lazy" scrolling="no" referrerpolicy="no-referrer" tabindex="-1" aria-hidden="true"></iframe></div>
             <span class="glass"></span>
             <span class="open-badge">Open live <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <a class="gh-badge" href="https://github.com/NoelVFX/Chainsilience-AI" target="_blank" rel="noopener" aria-label="Chainsilience AI source on GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
           </div>
           <div class="top">
             <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></div>
@@ -521,7 +538,6 @@
           <div class="tags"><span class="tag">Next.js</span><span class="tag">FastAPI</span><span class="tag">LangChain</span><span class="tag">Postgres</span><span class="tag">Monte&nbsp;Carlo</span><span class="tag">NVIDIA&nbsp;Nemotron</span></div>
           <div class="links-row">
             <a class="plink" href="https://chainsilience-ai.vercel.app/" target="_blank" rel="noopener">Live site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-            <a class="plink muted" href="https://github.com/NoelVFX/Chainsilience-AI" target="_blank" rel="noopener">Code</a>
             <a class="plink muted" href="chainsilience-pitch-deck.pdf" target="_blank" rel="noopener">Pitch deck <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></a>
           </div>
         </article>
@@ -531,9 +547,10 @@
           <a class="card-link" href="https://okx-preferences.vercel.app/" target="_blank" rel="noopener" aria-label="Open Preferences ASP Concierge live site"></a>
           <div class="preview">
             <div class="chrome"><span class="d"></span><span class="d"></span><span class="d"></span><span class="url">okx-preferences.vercel.app</span></div>
-            <div class="shot"><span class="ph">Loading preview…</span><iframe data-src="https://okx-preferences.vercel.app/" title="Live preview of Preferences AI A2MCP" loading="lazy" scrolling="no" referrerpolicy="no-referrer" tabindex="-1" aria-hidden="true"></iframe></div>
+            <div class="shot"><span class="ph">Loading preview…</span><iframe data-src="https://okx-preferences.vercel.app/" title="Live preview of Preferences ASP Concierge" loading="lazy" scrolling="no" referrerpolicy="no-referrer" tabindex="-1" aria-hidden="true"></iframe></div>
             <span class="glass"></span>
             <span class="open-badge">Open live <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <a class="gh-badge" href="https://github.com/NoelVFX/OKX_Preferences" target="_blank" rel="noopener" aria-label="Preferences ASP Concierge source on GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
           </div>
           <div class="top">
             <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M4 7l8-5 8 5M4 7v10l8 5 8-5V7"/></svg></div>
@@ -557,6 +574,7 @@
             <div class="shot"><span class="ph">Loading preview…</span><iframe data-src="https://textto-image.vercel.app/" title="Live preview of TTI Text-to-Media" loading="lazy" scrolling="no" referrerpolicy="no-referrer" tabindex="-1" aria-hidden="true"></iframe></div>
             <span class="glass"></span>
             <span class="open-badge">Open live <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <a class="gh-badge" href="https://github.com/NoelVFX/TexttoImage" target="_blank" rel="noopener" aria-label="Text-to-Media source on GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
           </div>
           <div class="top">
             <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m3 15 5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4" fill="currentColor" stroke="none"/></svg></div>
@@ -586,6 +604,24 @@
           <div class="tags"><span class="tag">In&nbsp;development</span></div>
           <div class="links-row">
             <a class="plink muted" href="https://github.com/NoelVFX/libduel" target="_blank" rel="noopener">Code <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <!-- EcoExchange -->
+        <article class="card reveal">
+          <a class="card-link" href="https://github.com/NoelVFX/EcoExchange" target="_blank" rel="noopener" aria-label="Open EcoExchange on GitHub"></a>
+          <div class="top">
+            <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+            <span class="status">2024 · Project</span>
+          </div>
+          <h3>EcoExchange</h3>
+          <div class="kind">Sustainability Platform</div>
+          <p>A full-stack sustainability platform designed to facilitate circular-economy exchanges and promote waste recycling.</p>
+          <div class="metric">Onboarded <b>50+ users</b> to a token-reward recycling system, automation backend built on Node.js &amp; Firebase behind a Discord bot.</div>
+          <div class="metric">Automated waste sorting across <b>12 material categories</b> with a PyTorch MobileNetV2 CNN trained on a 13,000+ image Kaggle dataset.</div>
+          <div class="tags"><span class="tag">Node.js</span><span class="tag">Firebase</span><span class="tag">Discord</span><span class="tag">PyTorch</span><span class="tag">MobileNetV2</span><span class="tag">Kaggle</span></div>
+          <div class="links-row">
+            <a class="plink muted" href="https://github.com/NoelVFX/EcoExchange" target="_blank" rel="noopener">Code <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           </div>
         </article>
 
@@ -641,6 +677,7 @@
           <div class="t">Agentiiv Case Design Competition, 1st Runner-Up</div>
           <div class="m">University of Toronto · 2025</div>
           <p>Designed a cybersecurity gateway for untrusted Model Context Protocols (MCPs) using a proxy architecture and RSA encryption.</p>
+          <a class="plink" style="margin-top: 12px;" href="https://docs.google.com/presentation/d/1MprDp7W0XGH5jzEiZSJZvCSU2t35OOfR/edit?usp=sharing&amp;ouid=107265018977902100976&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener">Slide deck <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
         </div>
         <div class="award">
           <div class="t">International Blockchain Olympiad, Silver (Circular&nbsp;X)</div>
@@ -705,6 +742,9 @@
         </a>
         <a href="https://www.linkedin.com/in/anson-ho-b874a1256/" target="_blank" rel="noopener" aria-label="LinkedIn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM.5 8h4V24h-4V8Zm7 0h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-7.1c0-1.7-.03-3.9-2.38-3.9-2.38 0-2.75 1.86-2.75 3.78V24h-4V8Z"/></svg>
+        </a>
+        <a href="https://x.com/Noel_VFX_" target="_blank" rel="noopener" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
       </div>
     </div>
