@@ -15,20 +15,20 @@
 <style>
   /* ---------- tokens: light is the base; dark redefines only the tokens ---------- */
   :root {
-    --bg: #eceef1;
+    --bg: #eaf0f8;
     --surface: #ffffff;
-    --surface-2: #f4f5f7;
-    --text: #12161d;
-    --muted: #59616f;
-    --faint: #8b93a0;
-    --line: rgba(18, 22, 29, 0.13);
-    --line-2: rgba(18, 22, 29, 0.07);
-    --accent: #955600;
-    --accent-bright: #b26a00;
-    --accent-quiet: rgba(149, 86, 0, 0.1);
-    --accent-ink: #fff;
-    --shadow: 0 1px 2px rgba(18, 22, 29, 0.06), 0 12px 34px rgba(18, 22, 29, 0.08);
-    --grid: rgba(18, 22, 29, 0.04);
+    --surface-2: #eef3fb;
+    --text: #0e1526;
+    --muted: #4b5875;
+    --faint: #8791a8;
+    --line: rgba(14, 30, 60, 0.14);
+    --line-2: rgba(14, 30, 60, 0.07);
+    --accent: #0a74e6;
+    --accent-bright: #0a84ff;
+    --accent-quiet: rgba(10, 116, 230, 0.1);
+    --accent-ink: #ffffff;
+    --shadow: 0 1px 2px rgba(14, 30, 60, 0.06), 0 12px 34px rgba(14, 30, 60, 0.1);
+    --grid: rgba(14, 30, 60, 0.04);
 
     --font-display: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
     --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
@@ -38,37 +38,37 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0b0e14;
-      --surface: #12161f;
-      --surface-2: #171c27;
-      --text: #e9ecf2;
-      --muted: #8c95a6;
-      --faint: #626b7d;
-      --line: rgba(255, 255, 255, 0.1);
-      --line-2: rgba(255, 255, 255, 0.055);
-      --accent: #ffb020;
-      --accent-bright: #ffc24d;
-      --accent-quiet: rgba(255, 176, 32, 0.13);
-      --accent-ink: #191100;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 46px rgba(0, 0, 0, 0.5);
-      --grid: rgba(255, 255, 255, 0.035);
+      --bg: #05070f;
+      --surface: #0b1122;
+      --surface-2: #111a31;
+      --text: #e8f1ff;
+      --muted: #8ea2c4;
+      --faint: #5a6b8b;
+      --line: rgba(120, 190, 255, 0.14);
+      --line-2: rgba(120, 190, 255, 0.06);
+      --accent: #38d6ff;
+      --accent-bright: #7ceaff;
+      --accent-quiet: rgba(56, 214, 255, 0.14);
+      --accent-ink: #04121c;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 46px rgba(0, 10, 30, 0.6);
+      --grid: rgba(120, 190, 255, 0.04);
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0b0e14;
-    --surface: #12161f;
-    --surface-2: #171c27;
-    --text: #e9ecf2;
-    --muted: #8c95a6;
-    --faint: #626b7d;
-    --line: rgba(255, 255, 255, 0.1);
-    --line-2: rgba(255, 255, 255, 0.055);
-    --accent: #ffb020;
-    --accent-bright: #ffc24d;
-    --accent-quiet: rgba(255, 176, 32, 0.13);
-    --accent-ink: #191100;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 46px rgba(0, 0, 0, 0.5);
-    --grid: rgba(255, 255, 255, 0.035);
+    --bg: #05070f;
+    --surface: #0b1122;
+    --surface-2: #111a31;
+    --text: #e8f1ff;
+    --muted: #8ea2c4;
+    --faint: #5a6b8b;
+    --line: rgba(120, 190, 255, 0.14);
+    --line-2: rgba(120, 190, 255, 0.06);
+    --accent: #38d6ff;
+    --accent-bright: #7ceaff;
+    --accent-quiet: rgba(56, 214, 255, 0.14);
+    --accent-ink: #04121c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 46px rgba(0, 10, 30, 0.6);
+    --grid: rgba(120, 190, 255, 0.04);
   }
 
   * { box-sizing: border-box; }
@@ -78,9 +78,9 @@
   body {
     margin: 0;
     background:
-      radial-gradient(62vw 62vw at 10% -8%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 58%),
-      radial-gradient(58vw 58vw at 104% 8%, color-mix(in srgb, #7b5cff 12%, transparent), transparent 60%),
-      radial-gradient(70vw 50vw at 50% 118%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 62%),
+      radial-gradient(62vw 62vw at 10% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 58%),
+      radial-gradient(58vw 58vw at 104% 8%, color-mix(in srgb, #2f6bff 16%, transparent), transparent 60%),
+      radial-gradient(70vw 50vw at 50% 118%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 62%),
       var(--bg);
     background-attachment: fixed;
     color: var(--text);
@@ -467,6 +467,36 @@
     @keyframes ambient-drift { to { background-position: 6% -3%, -4% 5%, 0 -4%, 0 0; } }
   }
 
+  /* ================= cursed-energy (JJK-inspired) flourishes ================= */
+  h1 .accent {
+    text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 65%, transparent),
+                 0 0 44px color-mix(in srgb, var(--accent) 34%, transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    h1 .accent { animation: cursed-pulse 2.6s ease-in-out infinite; }
+    @keyframes cursed-pulse {
+      0%, 100% { text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent), 0 0 36px color-mix(in srgb, var(--accent) 26%, transparent); }
+      50%      { text-shadow: 0 0 28px color-mix(in srgb, var(--accent) 88%, transparent), 0 0 64px color-mix(in srgb, var(--accent) 46%, transparent); }
+    }
+  }
+  /* energy glow on interactive surfaces */
+  .btn.primary { box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 38%, transparent); }
+  .btn:hover { box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 48%, transparent); }
+  .card:hover { box-shadow: var(--shadow), 0 0 36px color-mix(in srgb, var(--accent) 24%, transparent); }
+  .avail .dot { box-shadow: 0 0 0 3px var(--accent-quiet), 0 0 12px color-mix(in srgb, var(--accent) 75%, transparent); }
+  .hero-photo img {
+    box-shadow: 0 0 0 5px var(--accent-quiet), 0 0 46px color-mix(in srgb, var(--accent) 28%, transparent), var(--shadow);
+  }
+  .cursor { box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent); }
+  /* katakana section labels */
+  .sec-head h2[data-jp]::after {
+    content: attr(data-jp);
+    display: block; margin-top: 6px;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, "Noto Sans JP", sans-serif;
+    font-size: 12px; letter-spacing: 0.34em; font-weight: 500;
+    color: var(--accent); opacity: 0.72; text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
   /* ================= card-deck reveal (Toolkit / Recognition) ================= */
   .deck-zone { position: relative; }
   /* no-JS: content shown normally, deck hidden. JS "arms" the deck. */
@@ -634,7 +664,7 @@
   <section id="work" class="reveal">
     <div class="wrap">
       <div class="sec-head">
-        <h2>Experience</h2>
+        <h2 data-jp="エクスペリエンス">Experience</h2>
         <span class="eyebrow">2024 — 2026</span>
       </div>
       <div class="xp">
@@ -677,7 +707,7 @@
   <section id="projects">
     <div class="wrap">
       <div class="sec-head">
-        <h2>Selected work</h2>
+        <h2 data-jp="プロジェクト">Selected work</h2>
         <span class="eyebrow">Live builds</span>
       </div>
       <div class="projects">
@@ -799,7 +829,7 @@
   <section id="skills" class="reveal">
     <div class="wrap">
       <div class="sec-head">
-        <h2>Toolkit</h2>
+        <h2 data-jp="ツールキット">Toolkit</h2>
         <span class="eyebrow">What I build with</span>
       </div>
       <div class="deck-zone" data-deck>
@@ -850,7 +880,7 @@
   <section id="awards" class="reveal">
     <div class="wrap">
       <div class="sec-head">
-        <h2>Recognition &amp; research</h2>
+        <h2 data-jp="アワード">Recognition &amp; research</h2>
         <span class="eyebrow">Awards · papers</span>
       </div>
       <div class="deck-zone" data-deck>
@@ -900,7 +930,7 @@
   <section id="about" class="reveal">
     <div class="wrap">
       <div class="sec-head">
-        <h2>About</h2>
+        <h2 data-jp="プロフィール">About</h2>
         <span class="eyebrow">The short version</span>
       </div>
       <div class="about-grid">
@@ -986,8 +1016,8 @@
     function readColors() {
       var cs = getComputedStyle(document.documentElement);
       return {
-        node: (cs.getPropertyValue("--accent") || "#ffb020").trim(),
-        line: cs.getPropertyValue("--text").trim() || "#888",
+        node: (cs.getPropertyValue("--accent") || "#38d6ff").trim(),
+        line: (cs.getPropertyValue("--accent-bright") || "#7ceaff").trim(),
       };
     }
     var COL = readColors();
@@ -1030,8 +1060,8 @@
         var a = nodes[i];
         for (var j = i + 1; j < nodes.length; j++) {
           var b = nodes[j], dx = a.sx - b.sx, dy = a.sy - b.sy, d = Math.hypot(dx, dy);
-          if (d < 142) {
-            ctx.globalAlpha = (1 - d / 142) * 0.11 * ((a.z + b.z) / 2);
+          if (d < 150) {
+            ctx.globalAlpha = (1 - d / 150) * 0.16 * ((a.z + b.z) / 2);
             ctx.strokeStyle = COL.line; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy); ctx.stroke();
           }
@@ -1039,11 +1069,11 @@
       }
       for (var k = 0; k < nodes.length; k++) {
         var p = nodes[k];
-        if (p.z > 0.68) { // soft glow on the nearest nodes
-          ctx.globalAlpha = 0.09 * p.z; ctx.fillStyle = COL.node;
-          ctx.beginPath(); ctx.arc(p.sx, p.sy, p.r * 4.2, 0, 6.2832); ctx.fill();
+        if (p.z > 0.6) { // cursed-energy glow on the nearer nodes
+          ctx.globalAlpha = 0.14 * p.z; ctx.fillStyle = COL.node;
+          ctx.beginPath(); ctx.arc(p.sx, p.sy, p.r * 5.2, 0, 6.2832); ctx.fill();
         }
-        ctx.globalAlpha = 0.32 + p.z * 0.42; ctx.fillStyle = COL.node;
+        ctx.globalAlpha = 0.36 + p.z * 0.46; ctx.fillStyle = COL.node;
         ctx.beginPath(); ctx.arc(p.sx, p.sy, p.r, 0, 6.2832); ctx.fill();
       }
       ctx.globalAlpha = 1;
