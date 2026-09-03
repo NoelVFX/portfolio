@@ -89,14 +89,16 @@
   /* ============================ magical cursor ============================ */
   .cursor { position: fixed; top: 0; left: 0; z-index: var(--z-cursor); pointer-events: none; }
   .cursor .flame {
-    position: absolute; width: 14px; height: 14px; border-radius: 50%;
+    position: absolute; width: 24px; height: 32px;
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle at 50% 40%, #fff 0%, var(--magic-2) 35%, var(--magic) 70%, transparent 72%);
-    box-shadow: 0 0 12px var(--magic), 0 0 26px rgba(76,201,255,0.5);
-    transition: width var(--t-fast) var(--e-out), height var(--t-fast) var(--e-out), background var(--t-fast);
+    /* A larger, game-like arrow keeps the familiar system-cursor silhouette. */
+    clip-path: polygon(0 0, 0 100%, 29% 75%, 47% 100%, 62% 92%, 45% 68%, 100% 68%);
+    background: linear-gradient(135deg, #fff4c7 0%, var(--gold) 38%, #a96b32 100%);
+    filter: drop-shadow(0 0 3px rgba(232,197,106,0.95)) drop-shadow(0 0 10px rgba(232,197,106,0.55));
+    transition: width var(--t-fast) var(--e-out), height var(--t-fast) var(--e-out), filter var(--t-fast);
   }
-  .cursor.hot .flame { width: 22px; height: 22px; }
-  .cursor.down .flame { width: 9px; height: 9px; }
+  .cursor.hot .flame { width: 29px; height: 38px; filter: drop-shadow(0 0 4px rgba(255,244,199,1)) drop-shadow(0 0 16px rgba(232,197,106,0.8)); }
+  .cursor.down .flame { width: 21px; height: 28px; }
   .cursor .ring {
     position: absolute; width: 34px; height: 34px; border-radius: 50%;
     transform: translate(-50%, -50%);
@@ -207,7 +209,7 @@
     will-change: transform; touch-action: none;
   }
   .stage.animate { transition: transform var(--t-slow) var(--e-in-out); }
-  .mapimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; display: block; user-select: none; -webkit-user-drag: none; }
+  .mapimg { position: absolute; inset: -18px; width: calc(100% + 36px); height: calc(100% + 36px); object-fit: fill; display: block; user-select: none; -webkit-user-drag: none; }
   #regions { position: absolute; inset: 0; }
   /* cinematic edge vignette blends the map into the world (no framed-picture look) */
   .map-vignette { position: fixed; inset: 0; z-index: 6; pointer-events: none; box-shadow: inset 0 0 200px 60px rgba(8, 6, 3, 0.9); }
@@ -544,7 +546,6 @@
       <b>Anson Ho</b>
       <span class="role">AI / ML Engineer</span>
     </div>
-    <div class="mana" aria-hidden="true"><span>MANA</span><span class="bar"><i></i></span></div>
   </div>
   <div class="hud-nav">
     <button class="hbtn" id="toWorld" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg><span class="lbl">World</span></button>
@@ -719,7 +720,7 @@
     { id:"legends",  name:"Hall of Legends",    section:"Awards",     label:"Artifacts", x:10, y:53, color:"var(--gold)", glyph:G.trophy, type:"awards", kicker:"Legendary artifacts", sub:"Awards and recognition." },
     { id:"dwarves",  name:"Agentic Dwarves",    section:"AI / Agents",label:"AI Systems", x:37, y:66, color:"var(--ember)", glyph:G.gear, type:"ai", kicker:"Rune-forged machines", sub:"Agents, RAG, retrieval, and multimodal systems." },
     { id:"forge",    name:"The Forge",          section:"Tech Stack", label:"Equipment", x:46, y:82, color:"var(--ember)", glyph:G.anvil, type:"forge", kicker:"The Forge", sub:"Languages, frameworks, and infrastructure, as equipment." },
-    { id:"guild",    name:"Adventurer's Guild", section:"Experience", label:"Contracts", x:56, y:54, color:"var(--gold)", glyph:G.banner, type:"experience", kicker:"Guild hall", sub:"Internships and professional contracts." },
+    { id:"guild",    name:"Adventurer's Guild", section:"Experience", label:"Internships", x:56, y:54, color:"var(--gold)", glyph:G.banner, type:"experience", kicker:"Guild hall", sub:"Internships and professional experience." },
     { id:"citadel",  name:"The Code Citadel",   section:"Projects",   label:"Quests", x:73, y:33, color:"var(--magic-2)", glyph:G.citadel, type:"projects", kicker:"Quest board", sub:"Shipped builds and competitions." }
   ];
 
@@ -751,7 +752,7 @@
 
   function bodyExperience(){
     return EXPERIENCE.map(function(j){
-      return '<div class="quest"><div class="qtop"><h3>' + esc(j.org) + '</h3><span class="status">Contract</span></div>' +
+      return '<div class="quest"><div class="qtop"><h3>' + esc(j.org) + '</h3><span class="status">Internship</span></div>' +
         '<div class="kind">' + esc(j.role) + '</div>' +
         '<div class="meta">' + esc(j.loc) + ' · ' + esc(j.when) + '</div>' +
         '<ul class="obj">' + j.obj.map(function(o){ return '<li>' + o + '</li>'; }).join("") + '</ul>' +
@@ -844,7 +845,8 @@
   var world = document.getElementById("world");
   function vw() { return window.innerWidth || document.documentElement.clientWidth || 1200; }
   function vh() { return window.innerHeight || document.documentElement.clientHeight || 700; }
-  function coverScale() { return Math.max(vw() / BASE_W, vh() / BASE_H) * 1.02; }
+  // Start above the fit-to-screen scale so the map is intentionally navigated by drag/scroll.
+  function coverScale() { return Math.max(vw() / BASE_W, vh() / BASE_H) * 1.2; }
   function clampN(v, a, b) { return Math.max(a, Math.min(b, v)); }
   function clampPan() {
     var w = BASE_W * view.s, h = BASE_H * view.s, iw = vw(), ih = vh();
