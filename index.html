@@ -87,7 +87,7 @@
   #stars { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.9; }
 
   /* ============================ magical cursor ============================ */
-  .cursor { position: fixed; top: 0; left: 0; z-index: var(--z-cursor); pointer-events: none; }
+  .cursor { display: none; position: fixed; top: 0; left: 0; z-index: var(--z-cursor); pointer-events: none; }
   .cursor .flame {
     position: absolute; width: 24px; height: 32px;
     transform: translate(-50%, -50%);
@@ -106,7 +106,7 @@
     transition: opacity var(--t-fast), width var(--t-fast) var(--e-out), height var(--t-fast) var(--e-out);
   }
   .cursor.hot .ring { opacity: 1; width: 46px; height: 46px; }
-  html.motion-ok .cursor-on, html.motion-ok .cursor-on * { cursor: none; }
+  html.motion-ok.cursor-on, html.motion-ok.cursor-on * { cursor: url("cursor-map.svg") 5 5, auto; }
   @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
 
   /* ============================ HUD ============================ */
@@ -197,6 +197,21 @@
   .cta.primary { background: var(--magic); color: var(--ink-on-accent); border-color: var(--magic); box-shadow: 0 0 26px rgba(76,201,255,0.35); }
   .cta.primary:hover { background: var(--magic-2); }
   .gate .fine { margin-top: 22px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--faint); }
+
+  /* ============================ cinematic intro ============================ */
+  .intro {
+    position: fixed; inset: 0; z-index: calc(var(--z-gate) + 10); display: grid; place-items: center;
+    background: #070b16; overflow: hidden;
+  }
+  .intro[hidden] { display: none; }
+  .intro video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .86; }
+  .intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 24%, rgba(4,6,12,.7) 100%); }
+  .intro-copy { position: relative; z-index: 1; margin-top: min(46vh, 330px); text-align: center; pointer-events: none; }
+  .intro-copy .sigil { color: var(--gold); font-size: 22px; text-shadow: 0 0 18px rgba(232,197,106,.75); }
+  .intro-copy p { margin: 8px 0 0; color: rgba(237,232,218,.75); font-family: var(--font-mono); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; }
+  .intro-skip { position: absolute; z-index: 2; right: 22px; bottom: 20px; cursor: pointer; color: var(--muted); background: rgba(7,11,22,.65); border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+  .intro-skip:hover { color: var(--gold); border-color: var(--gold); }
+  @media (prefers-reduced-motion: reduce) { .intro { display: none; } }
 
   /* ============================ world ============================ */
   .world { position: fixed; inset: 0; z-index: var(--z-world); overflow: hidden; opacity: 0; visibility: hidden; }
@@ -574,6 +589,14 @@
 <nav class="travel" id="travel" aria-label="Quick travel"></nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<div class="intro" id="intro" aria-label="Portfolio introduction">
+  <video id="introVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
+    <source src="realm-intro.mp4" type="video/mp4" />
+  </video>
+  <div class="intro-copy" aria-hidden="true"><div class="sigil">✦</div><p>the realm is waking</p></div>
+  <button class="intro-skip" id="introSkip" type="button">Skip intro</button>
+</div>
+
 <!-- ============================ region panel ============================ -->
 <div class="panel-scrim" id="scrim"></div>
 <aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle" hidden>
@@ -717,11 +740,11 @@
   var REGIONS = [
     { id:"archives", name:"Celestial Archives", section:"Research", label:"Publications", x:32, y:16, color:"var(--violet)", glyph:G.observatory, type:"research", kicker:"Ancient Archive", sub:"Peer-reviewed research and technical writing." },
     { id:"kingdom",  name:"Starting Kingdom",   section:"About",      label:"Identity", x:25, y:44, color:"var(--magic)", glyph:G.castle, type:"about", kicker:"Where the journey begins", sub:"AI / ML engineer, University of Toronto." },
-    { id:"legends",  name:"Hall of Legends",    section:"Awards",     label:"Artifacts", x:10, y:53, color:"var(--gold)", glyph:G.trophy, type:"awards", kicker:"Legendary artifacts", sub:"Awards and recognition." },
+    { id:"legends",  name:"Hall of Legends",    section:"Awards",     label:"Achievements", x:10, y:53, color:"var(--gold)", glyph:G.trophy, type:"awards", kicker:"Legendary achievements", sub:"Awards and recognition." },
     { id:"dwarves",  name:"Agentic Dwarves",    section:"AI / Agents",label:"AI Systems", x:37, y:66, color:"var(--ember)", glyph:G.gear, type:"ai", kicker:"Rune-forged machines", sub:"Agents, RAG, retrieval, and multimodal systems." },
-    { id:"forge",    name:"The Forge",          section:"Tech Stack", label:"Equipment", x:46, y:82, color:"var(--ember)", glyph:G.anvil, type:"forge", kicker:"The Forge", sub:"Languages, frameworks, and infrastructure, as equipment." },
+    { id:"forge",    name:"The Forge",          section:"Tech Stack", label:"Skills", x:46, y:82, color:"var(--ember)", glyph:G.anvil, type:"forge", kicker:"The Forge", sub:"Languages, frameworks, and infrastructure, as skills." },
     { id:"guild",    name:"Adventurer's Guild", section:"Experience", label:"Internships", x:56, y:54, color:"var(--gold)", glyph:G.banner, type:"experience", kicker:"Guild hall", sub:"Internships and professional experience." },
-    { id:"citadel",  name:"The Code Citadel",   section:"Projects",   label:"Quests", x:73, y:33, color:"var(--magic-2)", glyph:G.citadel, type:"projects", kicker:"Quest board", sub:"Shipped builds and competitions." }
+    { id:"citadel",  name:"The Code Citadel",   section:"Projects",   label:"Projects", x:73, y:33, color:"var(--magic-2)", glyph:G.citadel, type:"projects", kicker:"Project board", sub:"Shipped builds and competitions." }
   ];
 
   function esc(s){ return String(s); }
@@ -950,6 +973,25 @@
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
+
+  /* ============================ cinematic intro ============================ */
+  (function () {
+    var intro = document.getElementById("intro"), video = document.getElementById("introVideo"), skip = document.getElementById("introSkip");
+    if (!intro || !video || !skip) return;
+    var finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      video.pause();
+      intro.setAttribute("hidden", "");
+    }
+    skip.addEventListener("click", finish);
+    video.addEventListener("ended", finish);
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { finish(); return; }
+    var playback = video.play();
+    if (playback && playback.catch) playback.catch(function () { setTimeout(finish, 1200); });
+    setTimeout(finish, 4500);
+  })();
 
   /* ============================ mode switching + gate ============================ */
   var body = document.body, gate = document.getElementById("gate");
