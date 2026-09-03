@@ -443,7 +443,69 @@
   .paper { font-size: 14px; color: var(--muted); padding-left: 20px; position: relative; margin-top: 10px; }
   .paper::before { content: "\275D"; position: absolute; left: 0; top: 0; color: var(--violet); }
   .paper a { color: var(--magic); }
+  .paper a b { color: var(--magic); }
+  .paper a svg { width: 12px; height: 12px; vertical-align: -1px; }
   .paper a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---- click-to-shuffle deck of cards (Toolkit / Recognition) ---- */
+  .deck-zone { position: relative; }
+  .deck { display: none; }
+  .deck-zone.armed .deck {
+    display: block; position: absolute; top: 0; left: 50%; width: 260px; height: 290px; padding: 0; border: 0; background: none; cursor: pointer;
+    transform: translateX(-50%); z-index: 2;
+    transition: opacity 0.45s var(--e-out), transform 0.45s var(--e-out);
+  }
+  .deck-card, .deck-front {
+    position: absolute; inset: 0; border-radius: 16px; border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--ink-2) 90%, transparent);
+    box-shadow: var(--shadow); transition: transform 0.3s var(--e-out);
+  }
+  .deck-card:nth-child(1) { transform: rotate(-7deg) translateY(5px); }
+  .deck-card:nth-child(2) { transform: rotate(5deg) translateY(3px); }
+  .deck-card:nth-child(3) { transform: rotate(-2deg); }
+  .deck-front {
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; overflow: hidden;
+    background: radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--magic) 16%, transparent), transparent 60%), var(--ink-3);
+  }
+  .deck-front::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 30%, color-mix(in srgb, var(--magic) 22%, transparent) 48%, transparent 66%); transform: translateX(-120%); }
+  .deck-zone.armed:not(.revealed) .deck-front::after { animation: deck-sheen 3.4s ease-in-out infinite; }
+  @keyframes deck-sheen { 0%, 60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+  .deck-suit { font-size: 24px; color: var(--magic); line-height: 1; }
+  .deck-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+  .deck-cta { font-family: var(--font-title); font-weight: 700; font-size: 1.8rem; color: var(--text); }
+  .deck-hint { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .deck-zone.armed .deck:hover .deck-card:nth-child(1) { transform: rotate(-13deg) translate(-16px, -2px); }
+  .deck-zone.armed .deck:hover .deck-card:nth-child(2) { transform: rotate(11deg) translate(16px, -2px); }
+  .deck-zone.armed .deck:hover .deck-card:nth-child(3) { transform: rotate(-3deg) translateY(-4px); }
+  .deck-zone.armed .deck:hover .deck-front { transform: translateY(-6px); box-shadow: 0 22px 50px rgba(0,0,0,0.4); }
+  .deck-zone.armed .deck:focus-visible .deck-front { outline: 2px solid var(--magic); outline-offset: 3px; }
+  .deck-zone.shuffling .deck-card:nth-child(1) { animation: sh1 0.72s ease both; }
+  .deck-zone.shuffling .deck-card:nth-child(2) { animation: sh2 0.72s ease both; }
+  .deck-zone.shuffling .deck-card:nth-child(3) { animation: sh3 0.72s ease both; }
+  .deck-zone.shuffling .deck-front { animation: sh0 0.72s ease both; }
+  @keyframes sh0 { 0%{} 25%{transform:translateX(46px) rotate(11deg)} 55%{transform:translateX(-34px) rotate(-8deg)} 80%{transform:translateX(12px) rotate(3deg)} 100%{transform:none} }
+  @keyframes sh1 { 0%{transform:rotate(-7deg) translateY(5px)} 25%{transform:translate(-74px,-12px) rotate(-24deg)} 55%{transform:translate(40px,8px) rotate(16deg)} 80%{transform:translate(-16px,0) rotate(-9deg)} 100%{transform:rotate(-7deg) translateY(5px)} }
+  @keyframes sh2 { 0%{transform:rotate(5deg) translateY(3px)} 25%{transform:translate(70px,10px) rotate(22deg)} 55%{transform:translate(-38px,-6px) rotate(-14deg)} 80%{transform:translate(18px,2px) rotate(8deg)} 100%{transform:rotate(5deg) translateY(3px)} }
+  @keyframes sh3 { 0%{transform:rotate(-2deg)} 30%{transform:translate(24px,-14px) rotate(12deg)} 60%{transform:translate(-28px,10px) rotate(-12deg)} 100%{transform:rotate(-2deg)} }
+  .deck-panels { display: grid; grid-template-rows: 1fr; }
+  .deck-zone.armed .deck-panels { grid-template-rows: 0fr; transition: grid-template-rows 0.55s var(--e-out); }
+  .deck-panels-inner { min-height: 0; overflow: hidden; }
+  .deck-zone.armed { min-height: 330px; transition: min-height 0.55s var(--e-out); }
+  .deck-zone.armed:not(.revealed) .deck-panels-inner { visibility: hidden; }
+  .deck-zone.revealed { min-height: 0; }
+  .deck-zone.revealed .deck-panels { grid-template-rows: 1fr; }
+  .deck-zone.revealed .deck { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(1.06); pointer-events: none; }
+  .deck-zone.armed .pf-skill, .deck-zone.armed .pf-award {
+    opacity: 0; transform: translateY(60px) scale(0.86) rotate(-3deg);
+    transition: opacity 0.55s ease, transform 0.7s cubic-bezier(0.18, 0.9, 0.24, 1);
+  }
+  .deck-zone.revealed .pf-skill, .deck-zone.revealed .pf-award { opacity: 1; transform: none; }
+  .deck-zone.revealed .pf-skills > :nth-child(1), .deck-zone.revealed .pf-awards > :nth-child(1) { transition-delay: 0.1s; }
+  .deck-zone.revealed .pf-skills > :nth-child(2), .deck-zone.revealed .pf-awards > :nth-child(2) { transition-delay: 0.22s; }
+  .deck-zone.revealed .pf-skills > :nth-child(3), .deck-zone.revealed .pf-awards > :nth-child(3) { transition-delay: 0.34s; }
+  .deck-zone.revealed .pf-skills > :nth-child(4), .deck-zone.revealed .pf-awards > :nth-child(4) { transition-delay: 0.46s; }
+  .deck-zone.revealed .pf-skills > :nth-child(5) { transition-delay: 0.58s; }
+  @media (max-width: 560px) { .deck-zone.armed .deck { width: 220px; height: 250px; } .deck-cta { font-size: 1.5rem; } }
 
   .pf-foot { border-top: 1px solid var(--line-2); padding: 44px 0 70px; }
   .pf-foot h3 { font-family: var(--font-title); font-weight: 700; font-size: clamp(1.5rem, 3.5vw, 2.2rem); margin: 0; }
@@ -983,8 +1045,12 @@
       '<div class="metrics">' + metrics.map(function (m) { return '<div class="cell"><div class="v">' + m[0] + '<span class="u">' + m[1] + '</span></div><div class="l">' + m[2] + '</div></div>'; }).join("") + '</div></div>' +
       '<section class="wrap pf-sec"><div class="pf-h"><h2>Experience</h2><span class="e">2024 - 2026</span></div><div class="pf-jobs">' + jobs + '</div></section>' +
       '<section class="wrap pf-sec"><div class="pf-h"><h2>Selected work</h2><span class="e">Live builds</span></div><div class="pf-grid">' + projects + '</div></section>' +
-      '<section class="wrap pf-sec"><div class="pf-h"><h2>Toolkit</h2><span class="e">What I build with</span></div><div class="pf-skills">' + skills + '</div></section>' +
-      '<section class="wrap pf-sec"><div class="pf-h"><h2>Recognition</h2><span class="e">Awards</span></div><div class="pf-awards">' + awards + '</div></section>' +
+      '<section class="wrap pf-sec"><div class="pf-h"><h2>Toolkit</h2><span class="e">What I build with</span></div>' +
+        '<div class="deck-zone" data-deck><button class="deck" type="button" aria-expanded="false" aria-controls="pf-toolkit"><span class="deck-card"></span><span class="deck-card"></span><span class="deck-card"></span><span class="deck-front"><span class="deck-suit">&#9670;</span><span class="deck-eyebrow">Toolkit</span><span class="deck-cta">Click me!</span><span class="deck-hint">shuffle &amp; deal the stack</span></span></button><div class="deck-panels" id="pf-toolkit"><div class="deck-panels-inner"><div class="pf-skills">' + skills + '</div></div></div></div>' +
+      '</section>' +
+      '<section class="wrap pf-sec"><div class="pf-h"><h2>Recognition</h2><span class="e">Awards</span></div>' +
+        '<div class="deck-zone" data-deck><button class="deck" type="button" aria-expanded="false" aria-controls="pf-recognition"><span class="deck-card"></span><span class="deck-card"></span><span class="deck-card"></span><span class="deck-front"><span class="deck-suit">&#9670;</span><span class="deck-eyebrow">Recognition</span><span class="deck-cta">Click me!</span><span class="deck-hint">shuffle &amp; deal the stack</span></span></button><div class="deck-panels" id="pf-recognition"><div class="deck-panels-inner"><div class="pf-awards">' + awards + '</div></div></div></div>' +
+      '</section>' +
       '<section class="wrap pf-sec"><div class="pf-h"><h2>Research</h2><span class="e">Publications</span></div>' + research + '</section>' +
       '<footer class="wrap pf-foot"><h3>Let\'s build something.</h3><div class="sub">' + IDENTITY.email + ' &nbsp;·&nbsp; ' + IDENTITY.phone + '</div>' +
       '<div class="social"><a href="mailto:' + IDENTITY.email + '" aria-label="Email">' + ICON.mail + '</a>' +
@@ -992,6 +1058,23 @@
       '<a href="' + IDENTITY.linkedin + '" target="_blank" rel="noopener" aria-label="LinkedIn">' + ICON.li + '</a>' +
       '<a href="' + IDENTITY.x + '" target="_blank" rel="noopener" aria-label="X">' + ICON.xg + '</a></div>' +
       '<div class="copyright">© 2026 Ka Woon (Anson) Ho. Built from scratch, no template.</div></footer>';
+  })();
+
+  /* ---- arm the click-to-shuffle decks in the portfolio view ---- */
+  (function () {
+    document.querySelectorAll("#portfolio [data-deck]").forEach(function (zone) {
+      var deck = zone.querySelector(".deck"), panels = zone.querySelector(".deck-panels");
+      if (!deck || !panels) return;
+      zone.classList.add("armed"); panels.setAttribute("aria-hidden", "true");
+      deck.addEventListener("click", function () {
+        if (zone.classList.contains("revealed") || zone.classList.contains("busy")) return;
+        zone.classList.add("busy", "shuffling");
+        setTimeout(function () {
+          zone.classList.remove("shuffling"); zone.classList.add("revealed");
+          deck.setAttribute("aria-expanded", "true"); panels.setAttribute("aria-hidden", "false");
+        }, 720);
+      });
+    });
   })();
 
   /* ============================ starfield ============================ */
