@@ -204,7 +204,8 @@
     background: #070b16; overflow: hidden;
   }
   .intro[hidden] { display: none; }
-  .intro video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .86; }
+  .intro video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; opacity: .86; animation: intro-zoom 5.1s ease-out both; }
+  @keyframes intro-zoom { from { transform: scale(1); } to { transform: scale(1.08); } }
   .intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 24%, rgba(4,6,12,.7) 100%); }
   .intro-copy { position: relative; z-index: 1; margin-top: min(46vh, 330px); text-align: center; pointer-events: none; }
   .intro-copy .sigil { color: var(--gold); font-size: 22px; text-shadow: 0 0 18px rgba(232,197,106,.75); }
@@ -990,7 +991,7 @@
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { finish(); return; }
     var playback = video.play();
     if (playback && playback.catch) playback.catch(function () { setTimeout(finish, 1200); });
-    setTimeout(finish, 4500);
+    setTimeout(finish, 6500);
   })();
 
   /* ============================ mode switching + gate ============================ */
