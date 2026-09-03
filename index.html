@@ -199,7 +199,7 @@
   /* ============================ world ============================ */
   .world { position: fixed; inset: 0; z-index: var(--z-world); overflow: hidden; opacity: 0; visibility: hidden; }
   body[data-mode="world"] .world { opacity: 1; visibility: visible; transition: opacity var(--t-slow) var(--e-out); }
-  .world { background: radial-gradient(120% 100% at 50% 40%, #14100a, #0a0806 70%, #070604); cursor: grab; }
+  .world { background: radial-gradient(120% 100% at 50% 40%, #14100a, #0a0806 70%, #070604); cursor: grab; touch-action: none; }
   .world.grabbing { cursor: grabbing; }
   .stage {
     position: absolute; left: 0; top: 0; width: 1800px; height: 1005px;
@@ -350,6 +350,25 @@
   /* skill / inventory groups */
   .invgroup { margin-top: 18px; }
   .invgroup .h { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rc); }
+
+  /* visual skill tree */
+  .tree { margin-top: 16px; }
+  .tree-root {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-title); font-weight: 600; font-size: 1rem; color: var(--rc);
+    padding: 8px 15px; border: 1px solid var(--rc); border-radius: 10px;
+    background: color-mix(in srgb, var(--rc) 12%, var(--ink-3));
+  }
+  .tree-branches {
+    margin-top: 4px; margin-left: 15px; padding-left: 16px;
+    border-left: 2px solid color-mix(in srgb, var(--rc) 40%, var(--line));
+    display: flex; flex-direction: column; gap: 15px;
+  }
+  .branch { position: relative; padding-top: 8px; }
+  .branch::before { content: ""; position: absolute; left: -16px; top: 17px; width: 14px; height: 2px; background: color-mix(in srgb, var(--rc) 40%, var(--line)); }
+  .branch .bname { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+  .branch .bdot { width: 8px; height: 8px; border-radius: 50%; background: var(--rc); box-shadow: 0 0 8px color-mix(in srgb, var(--rc) 60%, transparent); }
+  .branch .leaves { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; padding-left: 16px; }
   .invgroup .sub { font-family: var(--font-mono); font-size: 10px; color: var(--faint); margin-left: 8px; text-transform: none; letter-spacing: 0.04em; }
   .invgrid { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
 
@@ -691,9 +710,21 @@
       FORGE.map(invBlock).join("");
   }
   function bodyAI(){
-    return '<p class="lede2">A civilization of rune-forged machines: agents, retrieval, and multimodal systems. The AI builds live as quests in the <b>Code Citadel</b>.</p>' +
-      AI_SKILLS.map(invBlock).join("") +
-      '<div class="reward" style="margin-top:18px">Featured AI builds &nbsp;·&nbsp; <b>Chainsilience AI</b>, <b>Preferences ASP Concierge</b>, <b>Text-to-Media</b></div>';
+    var branches = [
+      { b: "LLM Agents", leaves: ["Fine-tuning", "Model Eval", "Inference Opt."] },
+      { b: "RAG", leaves: ["Sentence Transformers", "FAISS", "Retrieval"] },
+      { b: "Multimodal", leaves: ["OpenCV", "Coqui XTTS", "Generation"] }
+    ];
+    var foundations = ["PyTorch", "TensorFlow", "cuDF", "OpenRouter"];
+    var tree = '<div class="tree"><span class="tree-root">&#9672; AI Systems</span><div class="tree-branches">' +
+      branches.map(function (x) {
+        return '<div class="branch"><span class="bname"><span class="bdot"></span>' + esc(x.b) + '</span><div class="leaves">' +
+          x.leaves.map(function (l) { return '<span class="chip">' + esc(l) + '</span>'; }).join("") + '</div></div>';
+      }).join("") + '</div></div>' +
+      '<div class="invgroup"><div class="h">Foundations<span class="sub">frameworks</span></div><div class="invgrid">' +
+      foundations.map(function (f) { return '<span class="chip">' + esc(f) + '</span>'; }).join("") + '</div></div>';
+    return '<p class="lede2">A civilization of rune-forged machines: agents, retrieval, and multimodal systems. The AI builds live as quests in the <b>Code Citadel</b>.</p>' + tree +
+      '<div class="reward" style="margin-top:18px">Featured AI builds &nbsp;&#183;&nbsp; <b>Chainsilience AI</b>, <b>Preferences ASP Concierge</b>, <b>Text-to-Media</b></div>';
   }
   function invBlock(g){
     return '<div class="invgroup"><div class="h">' + esc(g.h) + '<span class="sub">' + esc(g.sub) + '</span></div><div class="invgrid">' +
@@ -842,6 +873,18 @@
   scrim.addEventListener("click", closeRegion);
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") { if (panel.classList.contains("open")) closeRegion(); }
+  });
+  // trap Tab focus inside the open dialog (accessibility)
+  panel.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab" || !panel.classList.contains("open")) return;
+    var f = Array.prototype.filter.call(
+      panel.querySelectorAll('a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'),
+      function (el) { return !el.disabled && el.offsetParent !== null; }
+    );
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 
   /* ============================ mode switching + gate ============================ */
