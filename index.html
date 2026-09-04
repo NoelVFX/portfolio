@@ -168,51 +168,56 @@
   .travel button:hover, .travel button[aria-current="true"] { color: var(--text); background: var(--ink-3); border-color: var(--line); }
   .travel button .dot { color: var(--rc, var(--magic)); }
 
-  /* ============================ gate ============================ */
-  .gate {
-    position: fixed; inset: 0; z-index: var(--z-gate);
-    display: grid; place-items: center; text-align: center; padding: 24px;
-    background: radial-gradient(120% 90% at 50% 30%, rgba(11,17,32,0.6), rgba(5,8,15,0.94));
+  /* ============================ loader ============================ */
+  .loader {
+    position: fixed; inset: 0; z-index: 92; display: grid; place-items: center; padding: 24px;
+    background: radial-gradient(120% 100% at 50% 38%, #171109, #0a0708 74%, #060406);
   }
-  .gate[hidden] { display: none; }
-  .gate-inner { max-width: 640px; }
-  .gate .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--magic-2); }
-  .gate h1 {
-    font-family: var(--font-title); font-weight: 700; letter-spacing: 0.03em; line-height: 1.02;
-    font-size: clamp(2.4rem, 7vw, 4.6rem); margin: 18px 0 0; text-wrap: balance;
-    text-shadow: 0 0 30px rgba(76,201,255,0.25);
-  }
-  .gate h1 .and { display: block; font-size: 0.42em; letter-spacing: 0.3em; color: var(--muted); margin-top: 14px; }
-  .gate p.lede { max-width: 52ch; margin: 20px auto 0; color: var(--muted); font-size: clamp(1rem, 1.5vw, 1.12rem); }
-  .gate .choices { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 34px; }
-  .cta {
-    display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
-    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
-    padding: 14px 22px; border-radius: 12px; border: 1px solid var(--line);
-    background: rgba(17,26,46,0.55); color: var(--text);
-    transition: transform var(--t-fast) var(--e-out), border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
-  }
-  .cta:hover { transform: translateY(-2px); border-color: var(--magic); }
-  .cta svg { width: 16px; height: 16px; }
-  .cta.primary { background: var(--magic); color: var(--ink-on-accent); border-color: var(--magic); box-shadow: 0 0 26px rgba(76,201,255,0.35); }
-  .cta.primary:hover { background: var(--magic-2); }
-  .gate .fine { margin-top: 22px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--faint); }
+  .loader[hidden] { display: none; }
+  .loader-inner { width: min(320px, 78vw); text-align: center; }
+  .emblem { position: relative; width: 128px; height: 128px; margin: 0 auto; }
+  .emblem svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 0 12px rgba(232,197,106,0.35)); }
+  .emblem .ring-o { transform-origin: 50% 50%; animation: spin 11s linear infinite; }
+  .emblem .ring-o2 { transform-origin: 50% 50%; animation: spin 7s linear infinite reverse; }
+  .emblem .core { transform-origin: 50% 50%; animation: pulse 2.2s ease-in-out infinite; }
+  .emblem .mono { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-title); font-weight: 700; font-size: 30px; color: var(--gold); text-shadow: 0 0 16px rgba(232,197,106,0.6); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse { 0%,100% { opacity: 0.75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+  .loader .lbar { margin: 30px auto 0; width: 100%; height: 6px; border-radius: 4px; overflow: hidden; background: rgba(232,197,106,0.14); border: 1px solid rgba(232,197,106,0.28); }
+  .loader .lbar i { display: block; height: 100%; width: 0%; border-radius: 4px; background: linear-gradient(90deg, var(--ember), var(--gold)); box-shadow: 0 0 12px rgba(232,197,106,0.6); }
+  .loader .lmsg { margin-top: 12px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.22em; text-transform: lowercase; color: var(--parchment); }
+  .loader .lmsg::after { content: "..."; display: inline-block; width: 1.4em; text-align: left; animation: ldots 1.4s steps(4, end) infinite; }
+  @keyframes ldots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75%,100% { content: "..."; } }
+  .loader .lskip { position: absolute; right: 20px; bottom: 18px; cursor: pointer; color: var(--faint); background: rgba(10,8,6,0.6); border: 1px solid rgba(232,197,106,0.25); border-radius: 8px; padding: 7px 12px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; transition: color var(--t-fast), border-color var(--t-fast); }
+  .loader .lskip:hover { color: var(--gold); border-color: var(--gold); }
 
-  /* ============================ cinematic intro ============================ */
-  .intro {
-    position: fixed; inset: 0; z-index: calc(var(--z-gate) + 10); display: grid; place-items: center;
-    background: #070b16; overflow: hidden;
+  /* ============================ clouds reveal ============================ */
+  .clouds { position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0; visibility: hidden; }
+  .clouds.show { opacity: 1; visibility: visible; }
+  .clouds[hidden] { display: none; }
+  .cloud-half { position: absolute; top: -12%; bottom: -12%; width: 72%; will-change: transform; filter: blur(3px); }
+  .cloud-half.l {
+    left: -8%;
+    background:
+      radial-gradient(closest-side at 78% 22%, #ffffff, rgba(255,255,255,0) 72%),
+      radial-gradient(closest-side at 62% 45%, #eef2f8, rgba(238,242,248,0) 72%),
+      radial-gradient(closest-side at 88% 60%, #f6f8fc, rgba(246,248,252,0) 72%),
+      radial-gradient(closest-side at 55% 78%, #e7ecf4, rgba(231,236,244,0) 72%),
+      radial-gradient(closest-side at 90% 88%, #ffffff, rgba(255,255,255,0) 74%),
+      linear-gradient(90deg, #eef2f8 0%, #eef2f8 90%, rgba(238,242,248,0) 100%);
   }
-  .intro[hidden] { display: none; }
-  .intro video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; opacity: .86; animation: intro-zoom 5.1s ease-out both; }
-  @keyframes intro-zoom { from { transform: scale(1); } to { transform: scale(1.08); } }
-  .intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 24%, rgba(4,6,12,.7) 100%); }
-  .intro-copy { position: relative; z-index: 1; margin-top: min(46vh, 330px); text-align: center; pointer-events: none; }
-  .intro-copy .sigil { color: var(--gold); font-size: 22px; text-shadow: 0 0 18px rgba(232,197,106,.75); }
-  .intro-copy p { margin: 8px 0 0; color: rgba(237,232,218,.75); font-family: var(--font-mono); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; }
-  .intro-skip { position: absolute; z-index: 2; right: 22px; bottom: 20px; cursor: pointer; color: var(--muted); background: rgba(7,11,22,.65); border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
-  .intro-skip:hover { color: var(--gold); border-color: var(--gold); }
-  @media (prefers-reduced-motion: reduce) { .intro { display: none; } }
+  .cloud-half.r {
+    right: -8%;
+    background:
+      radial-gradient(closest-side at 22% 22%, #ffffff, rgba(255,255,255,0) 72%),
+      radial-gradient(closest-side at 38% 45%, #eef2f8, rgba(238,242,248,0) 72%),
+      radial-gradient(closest-side at 12% 60%, #f6f8fc, rgba(246,248,252,0) 72%),
+      radial-gradient(closest-side at 45% 78%, #e7ecf4, rgba(231,236,244,0) 72%),
+      radial-gradient(closest-side at 10% 88%, #ffffff, rgba(255,255,255,0) 74%),
+      linear-gradient(270deg, #eef2f8 0%, #eef2f8 90%, rgba(238,242,248,0) 100%);
+  }
+  .clouds.part .cloud-half.l { transform: translateX(-108%); transition: transform 1.6s cubic-bezier(0.6, 0, 0.2, 1); }
+  .clouds.part .cloud-half.r { transform: translateX(108%); transition: transform 1.6s cubic-bezier(0.6, 0, 0.2, 1); }
 
   /* ============================ world ============================ */
   .world { position: fixed; inset: 0; z-index: var(--z-world); overflow: hidden; opacity: 0; visibility: hidden; }
@@ -590,12 +595,28 @@
 <nav class="travel" id="travel" aria-label="Quick travel"></nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<div class="intro" id="intro" aria-label="Portfolio introduction">
-  <video id="introVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
-    <source src="realm-intro.mp4" type="video/mp4" />
-  </video>
-  <div class="intro-copy" aria-hidden="true"><div class="sigil">✦</div><p>the realm is waking</p></div>
-  <button class="intro-skip" id="introSkip" type="button">Skip intro</button>
+<!-- ============================ cloud reveal ============================ -->
+<div class="clouds" id="clouds" aria-hidden="true">
+  <div class="cloud-half l"></div>
+  <div class="cloud-half r"></div>
+</div>
+
+<!-- ============================ loader ============================ -->
+<div class="loader" id="loader" role="status" aria-live="polite" aria-label="Loading the map">
+  <div class="loader-inner">
+    <div class="emblem" aria-hidden="true">
+      <svg viewBox="0 0 100 100">
+        <circle class="ring-o" cx="50" cy="50" r="46" fill="none" stroke="#e8c56a" stroke-width="1.4" stroke-dasharray="2 7" opacity="0.85" />
+        <circle class="ring-o2" cx="50" cy="50" r="41" fill="none" stroke="#ff9d4d" stroke-width="1" stroke-dasharray="14 9" opacity="0.6" />
+        <circle class="ring-i" cx="50" cy="50" r="30" fill="rgba(232,197,106,0.06)" stroke="#e8c56a" stroke-width="1" opacity="0.8" />
+        <path class="core" d="M50 30 L54 46 L70 50 L54 54 L50 70 L46 54 L30 50 L46 46 Z" fill="#e8c56a" opacity="0.9" />
+      </svg>
+      <span class="mono">AH</span>
+    </div>
+    <div class="lbar" aria-hidden="true"><i id="loaderBar"></i></div>
+    <div class="lmsg">loading map</div>
+  </div>
+  <button class="lskip" id="loaderSkip" type="button">skip</button>
 </div>
 
 <!-- ============================ region panel ============================ -->
@@ -614,26 +635,6 @@
 
 <!-- ============================ recruiter / portfolio mode ============================ -->
 <div class="portfolio" id="portfolio"></div>
-
-<!-- ============================ gate ============================ -->
-<div class="gate" id="gate">
-  <div class="gate-inner">
-    <div class="eyebrow">The portfolio of Anson Ho</div>
-    <h1 class="title">Enter the Realm<span class="and">an AI / ML engineer's world</span></h1>
-    <p class="lede">A knowledge-graph builder of agents, retrieval, and multimodal systems, mapped as a realm you can explore. Or skip the journey and read it straight.</p>
-    <div class="choices">
-      <button class="cta primary" id="enterWorld" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="5"/></svg>
-        Enter the world
-      </button>
-      <button class="cta" id="viewPortfolio" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
-        View portfolio
-      </button>
-    </div>
-    <div class="fine">Recruiter? &nbsp;“View portfolio” is a clean, 30-second read.</div>
-  </div>
-</div>
 
 <script>
 (function () {
@@ -975,27 +976,8 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 
-  /* ============================ cinematic intro ============================ */
-  (function () {
-    var intro = document.getElementById("intro"), video = document.getElementById("introVideo"), skip = document.getElementById("introSkip");
-    if (!intro || !video || !skip) return;
-    var finished = false;
-    function finish() {
-      if (finished) return;
-      finished = true;
-      video.pause();
-      intro.setAttribute("hidden", "");
-    }
-    skip.addEventListener("click", finish);
-    video.addEventListener("ended", finish);
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { finish(); return; }
-    var playback = video.play();
-    if (playback && playback.catch) playback.catch(function () { setTimeout(finish, 1200); });
-    setTimeout(finish, 6500);
-  })();
-
-  /* ============================ mode switching + gate ============================ */
-  var body = document.body, gate = document.getElementById("gate");
+  /* ============================ mode switching ============================ */
+  var body = document.body;
   var toWorldBtn = document.getElementById("toWorld"), toPortfolioBtn = document.getElementById("toPortfolio");
   function setMode(mode) {
     body.setAttribute("data-mode", mode);
@@ -1010,20 +992,36 @@
   toWorldBtn.addEventListener("click", function () { setMode("world"); window.scrollTo({ top: 0 }); });
   toPortfolioBtn.addEventListener("click", function () { setMode("portfolio"); window.scrollTo({ top: 0 }); });
 
-  function dismissGate(mode) {
-    setMode(mode);
-    gate.setAttribute("hidden", "");
-    try { localStorage.setItem("ah-entered", "1"); } catch (e) {}
-    syncCursorTargets();
-  }
-  document.getElementById("enterWorld").addEventListener("click", function () { dismissGate("world"); });
-  document.getElementById("viewPortfolio").addEventListener("click", function () { dismissGate("portfolio"); });
+  // start in world mode; the loader + cloud reveal unveils the map
+  setMode("world");
 
-  // initial mode: remember returning visitors; first-timers see the gate
-  var entered = false, savedMode = "world";
-  try { entered = localStorage.getItem("ah-entered") === "1"; savedMode = localStorage.getItem("ah-mode") || "world"; } catch (e) {}
-  setMode(entered ? savedMode : "world");
-  if (entered) gate.setAttribute("hidden", "");
+  /* ---- intro sequence: loading map (progress) -> clouds part -> map ---- */
+  (function runIntro() {
+    var loader = document.getElementById("loader"), bar = document.getElementById("loaderBar"),
+        clouds = document.getElementById("clouds"), skip = document.getElementById("loaderSkip");
+    if (!loader || !bar || !clouds) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var DUR = reduce ? 1400 : 4500, done = false, t0 = Date.now(), raf = null;
+    function tick() {
+      var p = Math.min(1, (Date.now() - t0) / DUR);
+      bar.style.width = (p * 100) + "%";
+      if (p >= 1) finish(); else raf = requestAnimationFrame(tick);
+    }
+    function finish() {
+      if (done) return; done = true; if (raf) cancelAnimationFrame(raf);
+      bar.style.width = "100%";
+      resetView(false);                                  // map is ready behind the clouds
+      loader.style.transition = "opacity 0.45s ease"; loader.style.opacity = "0";
+      clouds.classList.add("show");
+      setTimeout(function () { loader.setAttribute("hidden", ""); }, 460);
+      void clouds.offsetWidth;                            // reflow so the transition runs (rAF-independent)
+      setTimeout(function () { clouds.classList.add("part"); }, 80);
+      setTimeout(function () { clouds.setAttribute("hidden", ""); clouds.classList.remove("show", "part"); }, reduce ? 1200 : 2100);
+    }
+    skip.addEventListener("click", finish);
+    loader.addEventListener("click", function (e) { if (e.target === loader) finish(); });
+    setTimeout(tick, 160);
+  })();
 
   /* ============================ toast + easter egg (Konami) ============================ */
   var toastEl = document.getElementById("toast"), toastT = null;
