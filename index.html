@@ -86,28 +86,20 @@
   }
   #stars { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.9; }
 
-  /* ============================ magical cursor ============================ */
-  .cursor { display: none; position: fixed; top: 0; left: 0; z-index: var(--z-cursor); pointer-events: none; }
-  .cursor .flame {
-    position: absolute; width: 24px; height: 32px;
-    transform: translate(-50%, -50%);
-    /* A larger, game-like arrow keeps the familiar system-cursor silhouette. */
-    clip-path: polygon(0 0, 0 100%, 29% 75%, 47% 100%, 62% 92%, 45% 68%, 100% 68%);
-    background: linear-gradient(135deg, #fff4c7 0%, var(--gold) 38%, #a96b32 100%);
-    filter: drop-shadow(0 0 3px rgba(232,197,106,0.95)) drop-shadow(0 0 10px rgba(232,197,106,0.55));
+  /* ============================ magical cursor (DOM element, renders in corners too) ============================ */
+  .cursor { display: none; position: fixed; top: 0; left: 0; z-index: var(--z-cursor); pointer-events: none; will-change: transform; }
+  .cursor img {
+    display: block; width: 42px; height: 42px;
+    /* nudge so the svg tip (hotspot ~5/64) sits on the pointer */
+    margin: -3px 0 0 -3px;
+    filter: drop-shadow(0 0 5px rgba(232,197,106,0.55)) drop-shadow(0 1px 2px rgba(0,0,0,0.4));
     transition: width var(--t-fast) var(--e-out), height var(--t-fast) var(--e-out), filter var(--t-fast);
   }
-  .cursor.hot .flame { width: 29px; height: 38px; filter: drop-shadow(0 0 4px rgba(255,244,199,1)) drop-shadow(0 0 16px rgba(232,197,106,0.8)); }
-  .cursor.down .flame { width: 21px; height: 28px; }
-  .cursor .ring {
-    position: absolute; width: 34px; height: 34px; border-radius: 50%;
-    transform: translate(-50%, -50%);
-    border: 1px solid rgba(76,201,255,0.5); opacity: 0;
-    transition: opacity var(--t-fast), width var(--t-fast) var(--e-out), height var(--t-fast) var(--e-out);
-  }
-  .cursor.hot .ring { opacity: 1; width: 46px; height: 46px; }
-  html.motion-ok.cursor-on, html.motion-ok.cursor-on * { cursor: url("cursor-map.svg") 5 5, auto; }
-  @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+  .cursor.hot img { width: 50px; height: 50px; filter: drop-shadow(0 0 8px rgba(255,244,199,0.9)) drop-shadow(0 0 16px rgba(232,197,106,0.7)); }
+  .cursor.down img { width: 36px; height: 36px; }
+  /* hide the native cursor everywhere when the DOM cursor is active */
+  html.motion-ok.cursor-on, html.motion-ok.cursor-on * { cursor: none; }
+  @media (hover: none), (pointer: coarse) { .cursor { display: none !important; } html.motion-ok.cursor-on, html.motion-ok.cursor-on * { cursor: auto; } }
 
   /* ============================ HUD ============================ */
   .hud {
@@ -555,7 +547,7 @@
 <div class="sky" aria-hidden="true"></div>
 <canvas id="stars" aria-hidden="true"></canvas>
 
-<div class="cursor" id="cursor" aria-hidden="true"><span class="ring"></span><span class="flame"></span></div>
+<div class="cursor" id="cursor" aria-hidden="true"><img src="cursor-map.svg" alt="" draggable="false" /></div>
 
 <!-- ============================ HUD ============================ -->
 <header class="hud">
@@ -794,13 +786,12 @@
     }).join("");
   }
   function bodyForge(){
-    return '<p class="lede2">Technologies as equipment. Names kept plain so a recruiter never has to decode the theme.</p>' +
-      FORGE.map(invBlock).join("");
+    return FORGE.map(invBlock).join("");
   }
   function bodyAI(){
     var branches = [
       { b: "LLM Agents", leaves: ["Fine-tuning", "Model Eval", "Inference Opt."] },
-      { b: "RAG", leaves: ["Sentence Transformers", "FAISS", "Retrieval"] },
+      { b: "RAG", leaves: ["Sentence Transformers", "FAISS", "LangChain"] },
       { b: "Multimodal", leaves: ["OpenCV", "Coqui XTTS", "Generation"] }
     ];
     var foundations = ["PyTorch", "TensorFlow", "cuDF", "OpenRouter"];
@@ -1135,13 +1126,10 @@
     var fine = matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
     var cur = document.getElementById("cursor"); if (!fine || !cur || !motionOK) { if (cur) cur.style.display = "none"; return; }
     document.documentElement.classList.add("cursor-on");
-    var flame = cur.querySelector(".flame"), ring = cur.querySelector(".ring"), x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y;
+    cur.style.display = "block";
     document.addEventListener("pointermove", function (e) {
-      x = e.clientX; y = e.clientY;
-      flame.style.transform = "translate(" + x + "px," + y + "px) translate(-50%,-50%)"; // flame pinned exactly
+      cur.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px)"; // DOM cursor pinned to pointer
     }, { passive: true });
-    // ring trails slightly for a familiar/ember feel
-    (function loop() { rx += (x - rx) * 0.22; ry += (y - ry) * 0.22; ring.style.transform = "translate(" + rx + "px," + ry + "px) translate(-50%,-50%)"; requestAnimationFrame(loop); })();
     window.syncCursorTargets = function () {};
     var HOT = "a, button, .region, [role='button'], input, textarea";
     document.addEventListener("pointerover", function (e) { if (e.target.closest && e.target.closest(HOT)) cur.classList.add("hot"); });
