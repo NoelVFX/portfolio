@@ -112,10 +112,11 @@
   .hud > * { pointer-events: auto; }
   .hud-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .crest {
-    width: 40px; height: 40px; flex: none; border-radius: 10px; display: grid; place-items: center;
-    background: radial-gradient(circle at 50% 30%, rgba(76,201,255,0.35), var(--ink-3));
-    border: 1px solid var(--line); color: var(--magic-2);
+    width: 40px; height: 40px; flex: none; border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--line); background: var(--ink-3);
+    box-shadow: 0 0 0 1px rgba(76,201,255,0.18);
   }
+  .crest img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
   .crest svg { width: 22px; height: 22px; }
   .hud-name { line-height: 1.15; min-width: 0; }
   .hud-name b { font-family: var(--font-title); font-weight: 600; font-size: 15px; letter-spacing: 0.04em; display: block; }
@@ -553,7 +554,7 @@
 <header class="hud">
   <div class="hud-id">
     <span class="crest" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 6v6c0 4.4 3.4 8.5 8 10 4.6-1.5 8-5.6 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg>
+      <img src="profile.jpg" alt="Anson Ho" />
     </span>
     <div class="hud-name">
       <b>Anson Ho</b>
@@ -718,7 +719,8 @@
     citadel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21V8l4-2 4 2 4-2 4 2v13"/><path d="M4 21h16M9 21v-5h6v5"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></svg>',
     banner: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 4h12l-3 4 3 4H6"/></svg>',
     gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>',
-    trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 5H5v2a3 3 0 0 0 3 3M16 5h3v2a3 3 0 0 1-3 3M10 14h4l1 5H9l1-5Z"/></svg>'
+    trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 5H5v2a3 3 0 0 0 3 3M16 5h3v2a3 3 0 0 1-3 3M10 14h4l1 5H9l1-5Z"/></svg>',
+    peak: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 20h18L14 6l-3 5-2-3-6 12Z"/><path d="M11 11l1.5-2.5"/></svg>'
   };
   var ICON = {
     ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>',
@@ -738,7 +740,8 @@
     { id:"dwarves",  name:"Agentic Dwarves",    section:"AI / Agents",label:"AI Systems", x:37, y:66, color:"var(--ember)", glyph:G.gear, type:"ai", kicker:"Rune-forged machines", sub:"Agents, RAG, retrieval, and multimodal systems." },
     { id:"forge",    name:"The Forge",          section:"Tech Stack", label:"Skills", x:46, y:82, color:"var(--ember)", glyph:G.anvil, type:"forge", kicker:"The Forge", sub:"Languages, frameworks, and infrastructure, as skills." },
     { id:"guild",    name:"Adventurer's Guild", section:"Experience", label:"Internships", x:56, y:54, color:"var(--gold)", glyph:G.banner, type:"experience", kicker:"Guild hall", sub:"Internships and professional experience." },
-    { id:"citadel",  name:"The Code Citadel",   section:"Projects",   label:"Projects", x:73, y:33, color:"var(--magic-2)", glyph:G.citadel, type:"projects", kicker:"Project board", sub:"Shipped builds and competitions." }
+    { id:"citadel",  name:"The Code Citadel",   section:"Projects",   label:"Projects", x:73, y:33, color:"var(--magic-2)", glyph:G.citadel, type:"projects", kicker:"Project board", sub:"Shipped builds and competitions." },
+    { id:"hobby",    name:"Hobby Peak",         section:"Interests",  label:"Hobbies & Soft Skills", x:85, y:52, color:"#86b26a", glyph:G.peak, type:"hobby", kicker:"Beyond the code", sub:"Hobbies, interests, and soft skills." }
   ];
 
   function esc(s){ return String(s); }
@@ -826,7 +829,14 @@
           '<div class="qlinks"><a class="qlink" href="' + r.u + '" target="_blank" rel="noopener">Read ' + ICON.ext + '</a></div></div>';
       }).join("");
   }
-  var BODY = { about: bodyAbout, experience: bodyExperience, projects: bodyProjects, forge: bodyForge, ai: bodyAI, awards: bodyAwards, research: bodyResearch };
+  function bodyHobby(){
+    var hobbies = ["Basketball", "Bowling", "Workouts", "Video games", "Japanese anime"];
+    var soft = ["Time management", "Leadership", "Problem solving", "Cost analysis", "Pitching", "Verbal presentation", "Interpersonal skills", "Relationship management", "Optimism", "Resilience", "Integrity", "Autonomous work ethic", "Effective communication"];
+    return '<p class="lede2">Outside building AI and web apps, I\'m on the court and in the gym: basketball, bowling, and workouts. My biggest passion off the screen is pitching and public speaking, I\'m excited, not afraid, to step on stage and articulate my ideas with confidence.</p>' +
+      invBlock({ h: "Side quests", sub: "hobbies & interests", items: hobbies }) +
+      invBlock({ h: "Party buffs", sub: "soft skills", items: soft });
+  }
+  var BODY = { about: bodyAbout, experience: bodyExperience, projects: bodyProjects, forge: bodyForge, ai: bodyAI, awards: bodyAwards, research: bodyResearch, hobby: bodyHobby };
 
   /* ============================ render map + travel ============================ */
   var regionsEl = document.getElementById("regions");
